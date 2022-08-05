@@ -18,4 +18,9 @@ class MainController {
         model.addAttribute("users", users)
         return "index"
     }
+    
+    @GetMapping("/add")
+    fun showAddPage(): String {
+        return "add"
+    }
 }
