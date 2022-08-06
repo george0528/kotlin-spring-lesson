@@ -7,6 +7,7 @@
 <body>
     <h1>Users</h1>
     <input type="button" onclick="location.href='/add'" value="追加ページ">
+    <input type="button" onclick="location.href='/api/users'" value="Usersページ">
     <ul>
         <li th:each="user : ${users}">[[${user.name}]]</li>
     </ul>
