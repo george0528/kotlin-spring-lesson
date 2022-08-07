@@ -1,4 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.google.protobuf.gradle.*
+
+// これを追加↓↓↓
+val protobufVersion = "3.17.0"
+val grpcVersion = "1.16.1"
+val grpcKotlinVersion = "0.1.2"
+val grpcSpringBootVersion = "4.8.0"
 
 plugins {
 	id("org.springframework.boot") version "2.7.2"
@@ -6,6 +13,9 @@ plugins {
 	kotlin("jvm") version "1.6.21"
 	kotlin("plugin.spring") version "1.6.21"
 	kotlin("plugin.jpa") version "1.6.21"
+	// これを追加↓↓↓
+	id("idea")
+	id("com.google.protobuf") version "0.8.16"
 }
 
 group = "com.example"
@@ -25,6 +35,9 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	runtimeOnly("com.h2database:h2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	// これを追加↓↓↓
+	implementation("io.github.lognet:grpc-spring-boot-starter:$grpcSpringBootVersion")
+	implementation("io.grpc:grpc-kotlin-stub:1.3.0") // $grpcKotlinVersionじゃなくて直接versionを記述
 }
 
 tasks.withType<KotlinCompile> {
@@ -36,4 +49,27 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+// これを追加↓↓↓
+protobuf {
+	protoc {
+		artifact = "com.google.protobuf:protoc:$protobufVersion"
+	}
+	plugins {
+		id("grpc") {
+			artifact = "io.grpc:protoc-gen-grpc-java:$grpcVersion"
+		}
+		id("grpckt") {
+			artifact = "io.grpc:protoc-gen-grpc-kotlin:$grpcKotlinVersion"
+		}
+	}
+	generateProtoTasks {
+		ofSourceSet("main").forEach {
+			it.plugins {
+				id("grpc")
+				id("grpckt")
+			}
+		}
+	}
 }
