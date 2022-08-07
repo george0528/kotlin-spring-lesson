@@ -29,6 +29,7 @@ class MainController {
     @PostMapping("/add")
     fun addNewUser(@RequestParam name: String): String {
         val result = userRepository.save(User(0, name))
+        println(result)
         return "redirect:/"
     }
 }
